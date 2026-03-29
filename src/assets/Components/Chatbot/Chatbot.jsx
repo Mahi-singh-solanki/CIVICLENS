@@ -1,131 +1,120 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, X, MessageSquare } from "lucide-react";
+import { Send, Bot, X } from "lucide-react";
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(""); 
   const [messages, setMessages] = useState([
-    { role: "bot", text: "Hello! I am CivicBot. How can I help you with CivicLens today?" }
+    { role: "bot", text: "Hello! I am CivicBot. How can I help you today?" }
   ]);
   const [loading, setLoading] = useState(false);
+  const [userRole, setUserRole] = useState(localStorage.getItem("role"));
   const scrollRef = useRef(null);
 
-  // Auto-scroll logic
+  useEffect(() => {
+    const handleRoleChange = () => {
+      const currentRole = localStorage.getItem("role");
+      setUserRole(currentRole);
+    };
+
+    // Check every second to see if the user logged in/out
+    const interval = setInterval(handleRoleChange, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, loading]);
+
+  // --- UPDATED LOGIC ---
+  // We use .trim() and .toLowerCase() to avoid simple spelling/casing errors
+  const normalizedRole = userRole ? userRole.trim().toLowerCase() : "";
+  
+  if (normalizedRole !== "normal user") {
+    return null;
+  }
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
 
     const userMsg = { role: "user", text: input };
     setMessages(prev => [...prev, userMsg]);
     setLoading(true);
-    const currentInput = input;
-    setInput("");
+    const textToSend = input;
+    setInput(""); 
 
     try {
-      // API call to your Backend
-      const response = await fetch("http://localhost:5000/api/chat", {
+      // Connect to your Python FastAPI backend
+      const response = await fetch("http://localhost:8000/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: currentInput }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: textToSend }),
       });
-
-      if (!response.ok) throw new Error("Backend response error");
-
       const data = await response.json();
-
-      // Backend should return { reply: "..." }
       setMessages(prev => [...prev, { role: "bot", text: data.reply }]);
-    } catch (error) {
-      console.error("Chat Error:", error);
-      setMessages(prev => [...prev, { 
-        role: "bot", 
-        text: "Please check if your server is running!" 
-      }]);
+    } catch (err) {
+      setMessages(prev => [...prev, { role: "bot", text: "Backend not connected." }]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="font-instrument">
-      {/* Floating Toggle Button */}
+    <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 999999 }}>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-[999] p-4 rounded-full shadow-2xl transition-all duration-500 hover:scale-110 active:scale-95 flex items-center justify-center
-          ${isOpen ? 'bg-red-500 rotate-90' : 'bg-emerald-600 rotate-0'}`}
+        style={{
+          width: '60px', height: '60px', borderRadius: '50%',
+          backgroundColor: isOpen ? '#ef4444' : '#059669',
+          color: 'white', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+        }}
       >
-        {isOpen ? <X size={28} className="text-white" /> : <Bot size={28} className="text-white" />}
+        {isOpen ? <X size={28} /> : <Bot size={28} />}
       </button>
 
-      {/* Chat Window */}
-      <div className={`fixed bottom-24 right-6 z-[998] w-[350px] sm:w-[400px] h-[550px] bg-[#0b1410] border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden transition-all duration-500 origin-bottom-right
-        ${isOpen ? 'scale-100 opacity-100 pointer-events-auto' : 'scale-0 opacity-0 pointer-events-none'}`}>
-        
-        {/* Header */}
-        <div className="p-6 bg-emerald-600/10 border-b border-white/5 flex items-center gap-3">
-          <div className="p-2 bg-emerald-600 rounded-xl">
-            <Bot size={20} className="text-white" />
+      {isOpen && (
+        <div style={{
+          position: 'absolute', bottom: '80px', right: '0',
+          width: '350px', height: '500px', backgroundColor: '#0b1410',
+          borderRadius: '20px', display: 'flex', flexDirection: 'column',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)',
+          overflow: 'hidden'
+        }}>
+          <div style={{ padding: '15px', background: 'rgba(5, 150, 105, 0.2)', color: 'white', fontWeight: 'bold' }}>
+            CivicBot
           </div>
-          <div>
-            <h3 className="text-white text-sm font-black uppercase tracking-widest">CivicBot</h3>
-            <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-tighter">AI Assistant</p>
-          </div>
-        </div>
 
-        {/* Messages Content */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-black/20 custom-scrollbar">
-          {messages.map((msg, i) => (
-            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] p-4 rounded-2xl text-xs leading-relaxed shadow-sm ${
-                msg.role === 'user' 
-                  ? 'bg-emerald-600 text-white rounded-tr-none' 
-                  : 'bg-white/5 text-gray-300 border border-white/5 rounded-tl-none'
-              }`}>
+          <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '15px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {messages.map((msg, i) => (
+              <div key={i} style={{ 
+                alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                backgroundColor: msg.role === 'user' ? '#059669' : 'rgba(255,255,255,0.1)',
+                padding: '10px', borderRadius: '10px', color: 'white', fontSize: '13px', maxWidth: '80%'
+              }}>
                 {msg.text}
               </div>
-            </div>
-          ))}
-          {loading && (
-            <div className="flex gap-2 items-center text-emerald-500 text-[10px] font-bold uppercase animate-pulse">
-              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" />
-              CivicBot is thinking...
-            </div>
-          )}
-        </div>
+            ))}
+            {loading && <div style={{ color: '#059669', fontSize: '10px' }}>Thinking...</div>}
+          </div>
 
-        {/* Input Field */}
-        <div className="p-6 bg-black/40 border-t border-white/5">
-          <div className="flex gap-2 bg-[#050d0a] border border-white/10 rounded-2xl p-2 focus-within:border-emerald-500 transition-all">
+          <div style={{ padding: '15px', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', gap: '10px', background: '#050d0a' }}>
             <input 
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Type your message..."
-              className="flex-1 bg-transparent px-3 py-2 text-xs text-white outline-none"
+              placeholder="Type here..."
+              style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)', background: 'transparent', color: 'white', outline: 'none' }}
             />
-            <button 
-              onClick={handleSend} 
-              disabled={loading}
-              className="p-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 rounded-xl text-white transition-all shadow-lg"
-            >
+            <button onClick={handleSend} style={{ padding: '10px 15px', backgroundColor: '#059669', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
               <Send size={16} />
             </button>
           </div>
         </div>
-      </div>
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.2); border-radius: 10px; }
-      `}} />
+      )}
     </div>
   );
 };

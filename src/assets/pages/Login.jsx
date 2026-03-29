@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { ArrowLeft, ShieldCheck, Mail } from 'lucide-react';
 
 const Login = () => {
   const [loginData, setLoginData] = useState({ 
     identifier: '', 
     password: '', 
-    role: 'Normal User',
     otp: '' 
   });
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -24,111 +24,155 @@ const Login = () => {
     setIsOtpSent(true);
   };
 
-  // 2. Main Login / Verify Function
-  const handleLogin = (e) => {
+  // 2. Main Login / Verify Function - MARKED AS ASYNC
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const { identifier, password, role, otp } = loginData;
+    const { identifier, password, otp } = loginData;
 
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const foundUser = users.find(u => 
-      (u.email === identifier || u.username === identifier) && 
-      u.role === role
-    );
+    try {
+      // NOTE: If you are using a real backend, uncomment this section:
+      /*
+      const response = await fetch("http://localhost:8000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier, password, otp }),
+      });
+      const data = await response.json();
 
-    if (!foundUser) return alert("Account not found for this User Type.");
-
-    // Check if we are verifying OTP or Password
-    if (isOtpSent) {
-      if (otp === '123456') { // Mock OTP Check
-        login(foundUser);
-        navigate('/');
-      } else {
-        alert("Invalid OTP code.");
+      if (data.success) {
+        localStorage.setItem("role", data.user_role); 
+        login(data.user);
+        navigate(data.user_role === "Normal User" ? "/user-home" : "/");
+        return;
       }
-    } else {
-      // Standard Password Login
-      if (foundUser.password === password) {
-        login(foundUser);
-        navigate('/');
+      */
+
+      // --- LOCAL STORAGE MOCK LOGIC (For development) ---
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const foundUser = users.find(u => 
+        (u.email === identifier || u.username === identifier)
+      );
+
+      if (!foundUser) return alert("Account not found. Please check your credentials.");
+
+      const completeLogin = (user) => {
+        // This ensures the Chatbot sees the role
+        localStorage.setItem("role", user.role); 
+        login(user);
+
+        // Redirect based on role
+        if (user.role === "Normal User") {
+          navigate("/");
+        } else if (user.role === "Admin") {
+          navigate("/");
+        } else if (user.role === "Government Authority") {
+          navigate("/");
+        } else {
+          navigate("/");
+        }
+      };
+
+      if (isOtpSent) {
+        if (otp === '123456') { 
+          completeLogin(foundUser);
+        } else {
+          alert("Invalid OTP code.");
+        }
       } else {
-        alert("Incorrect password.");
+        if (foundUser.password === password) {
+          completeLogin(foundUser);
+        } else {
+          alert("Incorrect password.");
+        }
       }
+    } catch (error) {
+      console.error("Login failed", error);
+      alert("An error occurred during login.");
     }
   };
 
   return (
-    <div className="relative min-h-screen bg-[#050d0a] flex flex-col items-center justify-center font-instrument overflow-hidden">
-         <div className="absolute top-8 left-12">
-        <h1 className="text-white text-2xl font-bold tracking-widest">CIVICLENS</h1>
+    <div className="relative min-h-screen bg-[#050d0a] flex flex-col items-center justify-center font-instrument overflow-x-hidden p-4">
+      
+      {/* Background Glows */}
+      <div className="absolute top-1/2 left-[-20%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 right-[-10%] w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-green-900/10 blur-[80px] rounded-full pointer-events-none" />
+
+      {/* Top Logo */}
+      <div className="absolute top-6 md:top-8 left-6 md:left-12">
+        <h1 
+          className="text-white text-xl md:text-2xl font-bold tracking-widest cursor-pointer uppercase italic" 
+          onClick={() => navigate('/')}
+        >
+          CIVICLENS
+        </h1>
       </div>
 
-      <div className="absolute top-1/2 left-[-10%] w-[500px] h-[500px] bg-emerald-500/20 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 right-[-5%] w-[400px] h-[400px] bg-green-900/10 blur-[100px] rounded-full pointer-events-none" />
+      {/* Main Card */}
+      <div className="relative z-10 w-full max-w-md bg-black/60 backdrop-blur-xl border border-white/5 p-8 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl transition-all duration-500 mt-12 md:mt-0">
+        
+        <div className="text-center mb-8 md:mb-10">
+            <h2 className="text-white text-3xl md:text-4xl font-bold uppercase tracking-tighter italic">
+            {isOtpSent ? "Verify Identity" : "Welcome Back"}
+            </h2>
+            <p className="text-gray-500 text-[10px] md:text-xs uppercase tracking-widest mt-2">
+                {isOtpSent ? "Enter the 6-digit code" : "Login to your account"}
+            </p>
+        </div>
 
-      <div className="relative z-10 w-full max-w-lg bg-black/60 backdrop-blur-xl border border-white/5 p-12 rounded-[2.5rem] shadow-2xl">
-        <h2 className="text-white text-4xl font-bold text-center mb-10 uppercase tracking-tighter">
-          {isOtpSent ? "Verify OTP" : "Login"}
-        </h2>
-
-        <form onSubmit={handleLogin} className="space-y-6">
-          
-          <div className="space-y-2">
-            <label className="text-[10px] text-emerald-500 font-bold uppercase tracking-[0.2em] ml-1">User Type</label>
-            <select 
-              className="w-full bg-[#0a1a14] border border-white/10 p-4 rounded-xl text-white outline-none focus:border-emerald-500 transition-all cursor-pointer text-sm"
-              value={loginData.role}
-              onChange={(e) => setLoginData({...loginData, role: e.target.value})}
-              disabled={isOtpSent}
-            >
-              <option value="Normal User">Citizen / User</option>
-              <option value="Government Authority">Government Authority</option>
-              <option value="Admin">System Admin</option>
-            </select>
+        <form onSubmit={handleLogin} className="space-y-4 md:space-y-6">
+          <div className="relative group">
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-emerald-500 transition-colors" size={18} />
+            <input
+                type="text"
+                placeholder="Email or Username"
+                className="w-full bg-[#0a1a14]/50 border border-white/10 p-4 pl-12 rounded-xl text-white placeholder:text-gray-600 focus:border-emerald-500 outline-none transition-all text-sm"
+                required
+                disabled={isOtpSent}
+                value={loginData.identifier}
+                onChange={(e) => setLoginData({ ...loginData, identifier: e.target.value })}
+            />
           </div>
 
-          <input
-            type="text"
-            placeholder="Email or Username"
-            className="w-full bg-transparent border border-white/10 p-4 rounded-xl text-white focus:border-emerald-500 outline-none transition-all"
-            required
-            disabled={isOtpSent}
-            onChange={(e) => setLoginData({ ...loginData, identifier: e.target.value })}
-          />
-
           {!isOtpSent ? (
-            <input
-              type="password"
-              placeholder="Password"
-              className="w-full bg-transparent border border-white/10 p-4 rounded-xl text-white placeholder:text-gray-600 focus:border-emerald-500 outline-none transition-all"
-              required
-              onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-            />
+            <div className="relative group">
+                <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-emerald-500 transition-colors" size={18} />
+                <input
+                type="password"
+                placeholder="Password"
+                className="w-full bg-[#0a1a14]/50 border border-white/10 p-4 pl-12 rounded-xl text-white placeholder:text-gray-600 focus:border-emerald-500 outline-none transition-all text-sm"
+                required
+                value={loginData.password}
+                onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                />
+            </div>
           ) : (
             <input
               type="text"
-              placeholder="Enter 6-digit OTP"
+              placeholder="0 0 0 0 0 0"
               maxLength="6"
-              className="w-full bg-transparent border border-white/10 p-4 rounded-xl text-white text-center text-2xl tracking-[0.5em] focus:border-emerald-500 outline-none transition-all"
+              className="w-full bg-[#0a1a14]/50 border border-white/10 p-4 rounded-xl text-white text-center text-2xl tracking-[0.4em] focus:border-emerald-500 outline-none transition-all font-mono"
               required
+              value={loginData.otp}
               onChange={(e) => setLoginData({ ...loginData, otp: e.target.value })}
             />
           )}
 
-          <div className="flex flex-col gap-3 pt-2">
+          <div className="flex flex-col gap-4 pt-4">
             <button
               type="submit"
-              className="w-full bg-[#00592E] hover:bg-emerald-600 text-white py-5 rounded-xl font-bold text-xl transition-all shadow-lg shadow-emerald-900/40 active:scale-95"
+              className="w-full bg-[#00592E] hover:bg-emerald-600 text-white py-4 md:py-5 rounded-xl font-black text-sm md:text-base uppercase tracking-widest transition-all shadow-lg shadow-emerald-900/20 active:scale-95 italic"
             >
-              {isOtpSent ? "Log In" : "Log In with Password"}
+              {isOtpSent ? "Finish Login" : "Sign In"}
             </button>
 
             {!isOtpSent && (
               <button
                 type="button"
                 onClick={handleRequestOtp}
-                className="text-xs text-emerald-500 font-bold hover:text-emerald-400 transition-colors py-2"
+                className="text-[10px] md:text-xs text-emerald-500 font-bold hover:text-white transition-colors py-2 uppercase tracking-widest"
               >
-                Or Login with OTP
+                Login with Secure OTP
               </button>
             )}
             
@@ -136,13 +180,25 @@ const Login = () => {
               <button
                 type="button"
                 onClick={() => setIsOtpSent(false)}
-                className="text-xs text-gray-500  py-2"
+                className="text-[10px] md:text-xs text-gray-500 py-2 flex items-center justify-center gap-2 hover:text-gray-300 transition-colors uppercase tracking-widest font-bold"
               >
-                Back to Password Login
+                <ArrowLeft size={12} /> Back to Password
               </button>
             )}
           </div>
         </form>
+
+        <div className="mt-8 pt-6 border-t border-white/5 text-center">
+            <p className="text-gray-600 text-[10px] md:text-xs uppercase tracking-widest">
+                Don't have an account? 
+                <button 
+                    onClick={() => navigate('/signup')} 
+                    className="text-white ml-2 font-black hover:underline"
+                >
+                    Create One
+                </button>
+            </p>
+        </div>
       </div>
     </div>
   );

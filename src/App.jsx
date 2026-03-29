@@ -26,12 +26,7 @@ function App() {
     <AuthProvider>
       <ReportProvider>
         <Router>
-          {/* Chatbot is placed here so it persists across all routes. 
-            The 'fixed' CSS classes in the Chatbot component will 
-            keep it in the bottom-right corner.
-          */}
-          <Chatbot /> 
-
+          <Chatbot />
           <Routes>
             {/* --- Public Routes --- */}
             <Route path="/" element={<CivicLensLanding />} />
