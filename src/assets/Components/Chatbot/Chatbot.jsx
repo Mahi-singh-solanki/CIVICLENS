@@ -67,7 +67,7 @@ const Chatbot = () => {
         onClick={() => setIsOpen(!isOpen)}
         style={{
           width: '60px', height: '60px', borderRadius: '50%',
-          backgroundColor: isOpen ? '#ef4444' : '#059669',
+          backgroundColor: isOpen ? '#016749' : '#00592E',
           color: 'white', border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           boxShadow: '0 4px 12px rgba(0,0,0,0.3)'

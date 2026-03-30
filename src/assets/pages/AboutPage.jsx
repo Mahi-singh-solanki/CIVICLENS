@@ -9,7 +9,8 @@ const AboutPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#050d0a] text-white font-sans no-scrollbar overflow-x-hidden">
+    // Changed font-sans to font-instrument
+    <div className="min-h-screen bg-[#050d0a] text-white font-instrument no-scrollbar overflow-x-hidden">
       
       {/* --- BACKGROUND DECOR --- */}
       <div className="absolute inset-0 pointer-events-none -z-10">
@@ -31,7 +32,7 @@ const AboutPage = () => {
         
         {/* --- HERO: THE VISION --- */}
         <section className="mb-24 text-center">
-          <h1 className="text-6xl md:text-10xl font-black uppercase tracking-tighter mb-8 leading-none">
+          <h1 className="text-6xl md:text-14xl font-black uppercase tracking-tighter mb-8 leading-none">
             Radical <br/> <span className="text-emerald-500 italic">Transparency.</span>
           </h1>
           <p className="text-gray-400 text-xl md:text-1xl max-w-3xl mx-auto font-light leading-relaxed">
@@ -53,11 +54,11 @@ const AboutPage = () => {
                 <div className="flex gap-4 pt-4">
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
                         <Eye className="text-emerald-500 mb-2" />
-                        <p className="text-[10px] font-bold uppercase">Visibility</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest">Visibility</p>
                     </div>
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
                         <ShieldCheck className="text-emerald-500 mb-2" />
-                        <p className="text-[10px] font-bold uppercase">Trust</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest">Trust</p>
                     </div>
                 </div>
               </div>
@@ -93,15 +94,15 @@ const AboutPage = () => {
         </section>
 
         {/* --- CALL TO ACTION --- */}
-        <section className="text-center bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-[4rem] p-20 shadow-2xl shadow-emerald-900/20">
+        <section className="text-center bg-[#00592E] rounded-[4rem] p-20 shadow-2xl shadow-emerald-900/20">
             <Users size={64} className="mx-auto mb-8 text-white/80" />
             <h3 className="text-4xl font-bold mb-6">Become part of the solution.</h3>
-            <p className="text-emerald-100/70 mb-10 max-w-xl mx-auto">
+            <p className="text-emerald-100/70 mb-10 max-w-xl mx-auto font-normal">
                 Join the 15,000+ citizens who are actively shaping the future of their urban environments.
             </p>
             <button 
                 onClick={() => navigate('/signup')}
-                className="bg-white text-emerald-900 px-12 py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-all"
+                className="bg-white text-emerald-900 px-12 py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-all shadow-xl"
             >
                 Join the Movement
             </button>
@@ -122,7 +123,7 @@ const ValueCard = ({ icon, title, desc }) => (
       {icon}
     </div>
     <h4 className="text-xl font-bold mb-4">{title}</h4>
-    <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
+    <p className="text-gray-500 text-sm leading-relaxed font-normal">{desc}</p>
   </div>
 );
 

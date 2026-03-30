@@ -36,7 +36,7 @@ const NavItem = ({ icon, label, active, onClick, badge }) => (
     <div
         onClick={() => onClick(label)}
         className={`flex items-center gap-4 px-4 py-3.5 rounded-xl cursor-pointer transition-all group relative overflow-hidden
-            ${active ? 'bg-emerald-600 text-white shadow-xl shadow-emerald-900/50' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+            ${active ? 'text-white shadow-xl shadow-emerald-900/50 bg-[#00592E]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
     >
         {active && <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none" />}
         <span className={`transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`}>{icon}</span>
@@ -161,7 +161,6 @@ const AdminDashboard = () => {
         }
     };
 
-    // --- BACKEND API INTEGRATION ---
     const handleAssignJurisdiction = async (authId, email, name) => {
         const selectedAreaName = areaAssignments[email];
         if (!selectedAreaName) {
@@ -176,15 +175,11 @@ const AdminDashboard = () => {
             return;
         }
 
-        console.log("🚀 SENDING THIS POLYGON TO BACKEND FOR", name, ":");
-        console.log(JSON.stringify(matchedLocation.polygon, null, 2));
-
         try {
             const response = await fetch(`http://127.0.0.1:8000/api/admin/jurisdiction/${authId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${localStorage.getItem('token')}` 
                 },
                 body: JSON.stringify({
                     jurisdiction: matchedLocation.polygon
@@ -212,7 +207,6 @@ const AdminDashboard = () => {
             case 'Overview':
                 return (
                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        {/* 4 Stats Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {analyticsStats.map((stat, i) => (
                                 <div key={i} className="bg-[#16221d] p-6 rounded-2xl border border-white/5 shadow-2xl hover:border-emerald-500/30 transition-all group">
@@ -227,7 +221,6 @@ const AdminDashboard = () => {
                             ))}
                         </div>
                         
-                        {/* RESTORED: Chart and Logs Section */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div className="bg-[#16221d] p-8 rounded-3xl border border-white/5 shadow-2xl">
                                 <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
@@ -268,7 +261,7 @@ const AdminDashboard = () => {
                                 <h2 className="text-2xl font-black text-white">Government Authorities</h2>
                                 <p className="text-gray-400 text-sm mt-1">Configure administrative entities and service jurisdictions.</p>
                             </div>
-                            <button onClick={() => setIsFormOpen(v => !v)} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg">
+                            <button onClick={() => setIsFormOpen(v => !v)} className="flex items-center gap-2 bg-[#00592E] hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg">
                                 <UserPlus size={16} /> New Authority
                             </button>
                         </div>
@@ -276,24 +269,14 @@ const AdminDashboard = () => {
                             {isFormOpen && (
                                 <form onSubmit={handleAddAuthority} className="bg-[#16221d] p-8 rounded-3xl border border-emerald-500/30 shadow-2xl h-fit space-y-5">
                                     <h3 className="text-sm font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2"><UserPlus size={16} /> Register New</h3>
-                                    
                                     <input type="text" required placeholder="Authority Name" value={newAuth.name} onChange={e => setNewAuth({...newAuth, name: e.target.value})} className="w-full bg-[#0b1410] border border-gray-700 rounded-xl p-3.5 text-white text-sm focus:border-emerald-500 outline-none" />
                                     <input type="email" required placeholder="Contact Email" value={newAuth.email} onChange={e => setNewAuth({...newAuth, email: e.target.value})} className="w-full bg-[#0b1410] border border-gray-700 rounded-xl p-3.5 text-white text-sm focus:border-emerald-500 outline-none" />
                                     <input type="password" required placeholder="Set Password" value={newAuth.password} onChange={e => setNewAuth({...newAuth, password: e.target.value})} className="w-full bg-[#0b1410] border border-gray-700 rounded-xl p-3.5 text-white text-sm focus:border-emerald-500 outline-none" />
-                                    
-                                    <select 
-                                        required
-                                        value={newAuth.department} 
-                                        onChange={e => setNewAuth({...newAuth, department: e.target.value})}
-                                        className="w-full bg-[#0b1410] border border-gray-700 rounded-xl p-3.5 text-white text-sm focus:border-emerald-500 outline-none"
-                                    >
+                                    <select required value={newAuth.department} onChange={e => setNewAuth({...newAuth, department: e.target.value})} className="w-full bg-[#0b1410] border border-gray-700 rounded-xl p-3.5 text-white text-sm focus:border-emerald-500 outline-none">
                                         <option value="" disabled>Select Department</option>
-                                        {DEPARTMENTS.map(dept => (
-                                            <option key={dept} value={dept}>{dept}</option>
-                                        ))}
+                                        {DEPARTMENTS.map(dept => (<option key={dept} value={dept}>{dept}</option>))}
                                     </select>
-
-                                    <button type="submit" className="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs uppercase transition-all hover:bg-emerald-500">Confirm</button>
+                                    <button type="submit" className="w-full py-3 bg-[#00592E] text-white rounded-xl font-bold text-xs uppercase transition-all hover:bg-emerald-500">Confirm</button>
                                 </form>
                             )}
                             <div className="bg-[#16221d] rounded-3xl border border-white/5 overflow-hidden shadow-2xl">
@@ -343,27 +326,12 @@ const AdminDashboard = () => {
                                         <p className="text-xs text-gray-500 mt-1">ID: {auth.id || 'Pending DB Sync'}</p>
                                     </div>
                                 </div>
-                                
                                 <div className="flex items-center gap-3 w-1/2 justify-end">
-                                    <select 
-                                        className="bg-[#0b1410] border border-gray-700 rounded-lg px-4 py-3 text-white text-sm w-2/3 outline-none focus:border-emerald-500 transition-colors"
-                                        value={areaAssignments[auth.email] || ''} 
-                                        onChange={e => setAreaAssignments({...areaAssignments, [auth.email]: e.target.value})}
-                                    >
+                                    <select className="bg-[#0b1410] border border-gray-700 rounded-lg px-4 py-3 text-white text-sm w-2/3 outline-none focus:border-emerald-500 transition-colors" value={areaAssignments[auth.email] || ''} onChange={e => setAreaAssignments({...areaAssignments, [auth.email]: e.target.value})}>
                                         <option value="">-- Select Map Polygon --</option>
-                                        {locations.map((loc, index) => (
-                                            <option key={index} value={loc.area}>
-                                                {loc.area}
-                                            </option>
-                                        ))}
+                                        {locations.map((loc, index) => (<option key={index} value={loc.area}>{loc.area}</option>))}
                                     </select>
-                                    
-                                    <button 
-                                        onClick={() => handleAssignJurisdiction(auth.id, auth.email, auth.name)} 
-                                        className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-lg font-bold uppercase text-xs tracking-wider transition-all"
-                                    >
-                                        Save
-                                    </button>
+                                    <button onClick={() => handleAssignJurisdiction(auth.id, auth.email, auth.name)} className="bg-[#00592E] hover:bg-emerald-600 text-white px-5 py-3 rounded-lg font-bold uppercase text-xs tracking-wider transition-all">Save</button>
                                 </div>
                             </div>
                         ))}
@@ -380,7 +348,7 @@ const AdminDashboard = () => {
                                         <h3 className="text-2xl font-bold text-white mt-2">{esc.title}</h3>
                                         <p className="text-gray-400 mt-2">{esc.description}</p>
                                     </div>
-                                    <button onClick={() => handleResolveEscalation(esc.id)} className="bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-emerald-400 transition-colors">Resolve</button>
+                                    <button onClick={() => handleResolveEscalation(esc.id)} className="bg-[#00592E] text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-emerald-400 transition-colors">Resolve</button>
                                 </div>
                             </div>
                         ))}
@@ -391,14 +359,21 @@ const AdminDashboard = () => {
     };
 
     return (
-        <div className="flex h-screen bg-[#0b1410] overflow-hidden font-sans text-gray-200">
+        <div className="flex h-screen bg-[#0b1410] overflow-hidden font-instrument text-gray-200">
             {/* --- SIDEBAR --- */}
             <aside className="w-72 bg-[#08100d] border-r border-gray-800 flex flex-col shrink-0 z-20 shadow-2xl">
                 <div className="h-24 flex flex-col justify-center px-8 border-b border-white/5">
-                    <h1 className="text-2xl font-black text-white tracking-widest leading-none">CIVICLENS</h1>
-                    <p className="text-[10px] font-bold text-emerald-500 tracking-[0.2em] mt-1 uppercase">System Admin Portal</p>
+                    <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+                        <img 
+                            src="/images/logo.png" 
+                            alt="Logo" 
+                            className="h-6 w-auto object-contain" 
+                        />
+                        <h1 className="text-lg font-black text-white tracking-widest uppercase italic leading-none">CIVICLENS</h1>
+                    </div>
+                    <p className="text-[9px] font-bold text-emerald-500 tracking-[0.2em] mt-2 uppercase pl-9">System Admin Portal</p>
                 </div>
-                <nav className="flex-1 p-6 space-y-2 overflow-y-auto">
+                <nav className="flex-1 p-6 space-y-2 overflow-y-auto no-scrollbar">
                     <NavItem icon={<LayoutDashboard size={20} />} label="Overview" active={activeTab === 'Overview'} onClick={setActiveTab} />
                     <NavItem icon={<Users size={20} />} label="Manage Authorities" active={activeTab === 'Manage Authorities'} onClick={setActiveTab} />
                     <NavItem icon={<Map size={20} />} label="Assign Areas" active={activeTab === 'Assign Areas'} onClick={setActiveTab} />
@@ -417,10 +392,11 @@ const AdminDashboard = () => {
                     <h2 className="text-3xl font-black text-white uppercase tracking-tight">{activeTab}</h2>
                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1">Management Console</p>
                 </header>
-                <div className="flex-1 overflow-y-auto p-10 pb-20 relative">
+                <div className="flex-1 overflow-y-auto p-10 pb-20 relative no-scrollbar">
                     {renderContent()}
                 </div>
             </main>
+            <style dangerouslySetInnerHTML={{ __html: `.no-scrollbar::-webkit-scrollbar { display: none; }`}} />
         </div>
     );
 };

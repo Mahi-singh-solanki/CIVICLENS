@@ -155,7 +155,7 @@ const ReportModal = ({ isOpen, onClose }) => {
                     {/* Submit Button */}
                     <button 
                         type="submit" 
-                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-5 rounded-[1.5rem] uppercase tracking-[0.3em] text-[11px] shadow-[0_10px_25px_-5px_rgba(16,185,129,0.3)] transition-all active:scale-[0.98] mt-4"
+                        className="w-full bg-[#00592E] hover:[#00592E] text-white font-black py-5 rounded-[1.5rem] uppercase tracking-[0.3em] text-[11px] shadow-[0_10px_25px_-5px_rgba(16,185,129,0.3)] transition-all active:scale-[0.98] mt-4"
                     >
                         Submit Official Report
                     </button>

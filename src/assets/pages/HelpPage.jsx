@@ -84,27 +84,17 @@ const HelpPage = () => {
         </section>
 
         {/* --- FAQ / CONTACT --- */}
-        <section className="grid md:grid-cols-3 gap-8">
-          <div className="md:col-span-2 bg-[#08100d] border border-white/5 rounded-[3rem] p-12">
-            <h3 className="text-2xl font-bold mb-8">Common Questions</h3>
-            <div className="space-y-8">
-              <Question q="How long does a resolution take?" a="The city average is currently 4.2 days. Urgent issues like water bursts are prioritised." />
-              <Question q="What are Civic Points?" a="Points earned for valid reports. High-ranking citizens get priority attention on future reports." />
-              <Question q="Is my data public?" a="Your report and photos are public, but your personal contact info is only visible to the authorities." />
-            </div>
-          </div>
+        <section className="w-full max-w-10xl grid md:grid-cols-3 gap-8">
+  <div className="md:col-span-2 bg-[#08100d] border border-white/5 rounded-[3rem] p-12">
+    <h3 className="text-2xl font-bold mb-8">Common Questions</h3>
+    <div className="space-y-8">
+      <Question q="How long does a resolution take?" a="The city average is currently 4.2 days. Urgent issues like water bursts are prioritised." />
+      <Question q="What are Civic Points?" a="Points earned for valid reports. High-ranking citizens get priority attention on future reports." />
+      <Question q="Is my data public?" a="Your report and photos are public, but your personal contact info is only visible to the authorities." />
+    </div>
+  </div>
+</section>
 
-          <div className="bg-emerald-600 rounded-[3rem] p-12 flex flex-col justify-between shadow-xl shadow-emerald-900/20">
-            <div>
-              <MessageSquare size={40} className="mb-6" />
-              <h3 className="text-2xl font-bold mb-4 leading-tight">Still need assistance?</h3>
-              <p className="text-emerald-100/70 text-sm">Our technical support team is available to help with account or submission issues.</p>
-            </div>
-            <button className="w-full bg-white text-emerald-900 font-black py-4 rounded-2xl uppercase text-[10px] tracking-widest hover:bg-emerald-50 transition-all mt-8">
-              Contact Support
-            </button>
-          </div>
-        </section>
       </main>
 
       <footer className="p-12 text-center text-gray-700 text-[10px] font-bold uppercase tracking-[0.3em] border-t border-white/5">

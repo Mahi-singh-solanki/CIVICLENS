@@ -17,13 +17,13 @@ const UserDashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const successStories = [
-    { id: 1, before: "/garbagesea.jpeg", after: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400", text: "River cleaned within 24hr" },
-    { id: 2, before: "/roadpot.jpeg", after: "/cleanroad.jpeg", text: "Potholes cleared from the road" },
-    { id: 3, before: "/garbagepark.jpeg", after: "/cleanpark.jpeg", text: "Public park restored" }
+    { id: 1, before: "images/garbagesea.jpeg", after: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400", text: "River cleaned within 24hr" },
+    { id: 2, before: "images/roadpot.jpeg", after: "images/cleanroad.jpeg", text: "Potholes cleared from the road" },
+    { id: 3, before: "images/garbagepark.jpeg", after: "images/cleanpark.jpeg", text: "Public park restored" }
   ];
 
   return (
-    <div className="min-h-screen bg-[#020604] text-gray-200 font-sans selection:bg-emerald-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-[#020604] text-gray-200 font-instrument selection:bg-emerald-500/30 overflow-x-hidden">
       
       {/* --- PREMIUM BACKGROUND GRADIENTS --- */}
       <div className="fixed inset-0 pointer-events-none">
@@ -31,16 +31,32 @@ const UserDashboard = () => {
         <div className="absolute bottom-[10%] right-[-5%] w-[250px] md:w-[500px] h-[250px] md:h-[500px] bg-green-900/5 blur-[100px] rounded-full" />
       </div>
 
-      {/* --- NAVBAR --- */}
+      {/* --- BRANDED NAVBAR --- */}
       <nav className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/5 bg-[#08100d]/80 px-4 md:px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <button 
-            onClick={() => navigate('/')} 
-            className="flex items-center gap-2 text-gray-500 hover:text-white transition-all uppercase text-[9px] md:text-[10px] font-black tracking-[0.2em]"
-          >
-            <ArrowLeft size={14} /> <span className="hidden xs:inline">Back</span>
-          </button>
           
+          {/* Left: Back Button + Logo */}
+          <div className="flex items-center gap-4 md:gap-8">
+            <button 
+              onClick={() => navigate('/')} 
+              className="flex items-center gap-2 text-gray-500 hover:text-white transition-all uppercase text-[9px] md:text-[10px] font-black tracking-[0.2em]"
+            >
+              <ArrowLeft size={18} />
+            </button>
+            
+            <div className="flex items-center gap-2 md:gap-3 cursor-pointer" onClick={() => navigate('/')}>
+              <img 
+                src="/images/logo.png" 
+                alt="CivicLens Logo" 
+                className="h-6 md:h-8 w-auto object-contain" 
+              />
+              <span className="hidden sm:block text-white text-lg font-bold tracking-widest uppercase italic">
+                CIVICLENS
+              </span>
+            </div>
+          </div>
+          
+          {/* Right: User Profile & Logout */}
           <div className="flex items-center gap-4 md:gap-6">
             <div className="flex flex-col items-end text-right">
               <p className="text-[8px] md:text-[10px] text-emerald-500 font-black uppercase tracking-widest">Active Citizen</p>
@@ -62,10 +78,10 @@ const UserDashboard = () => {
         
         {/* --- HERO SECTION --- */}
         <section className="text-center mb-16 md:mb-20">
-          <h1 className="text-4xl md:text-7xl font-black text-white mb-4 md:mb-6 tracking-tighter leading-tight italic">
-            Help improve your <br/> <span className="bg-gradient-to-r from-emerald-400 to-green-500 bg-clip-text text-transparent italic">Community.</span>
+          <h1 className="text-4xl md:text-7xl font-black text-white mb-4 md:mb-6 tracking-tighter leading-tight">
+            Help improve your <span className="bg-gradient-to-r from-emerald-400 to-green-500 bg-clip-text text-transparent italic">Community.</span>
           </h1>
-          <p className="text-gray-400 text-sm md:text-xl max-w-2xl mx-auto font-light leading-relaxed px-4 md:px-0">
+          <p className="text-gray-400 text-sm md:text-xl max-w-2xl mx-auto font-light leading-relaxed px-4 md:px-0 italic">
             Directly impact your surroundings by reporting issues to local authorities in real-time.
           </p>
         </section>
@@ -90,7 +106,6 @@ const UserDashboard = () => {
             {successStories.map((story) => (
               <SwiperSlide key={story.id}>
                 <div className="bg-[#08100d] border border-white/5 rounded-[2rem] md:rounded-[3rem] p-3 md:p-4 group transition-all hover:border-emerald-500/30 shadow-2xl">
-                  {/* flex-col for mobile, flex-row for desktop */}
                   <div className="flex flex-col md:flex-row gap-3 md:gap-4">
                     <div className="relative flex-1 rounded-2xl md:rounded-[2rem] overflow-hidden aspect-video md:aspect-auto md:h-80">
                       <img src={story.before} className="w-full h-full object-cover filter grayscale opacity-60 group-hover:opacity-100 transition-all duration-700" alt="Before" />
@@ -113,13 +128,13 @@ const UserDashboard = () => {
         {/* --- CENTRAL ACTION HUB --- */}
         <section className="relative py-12 md:py-20 px-6 md:px-8 bg-gradient-to-br from-[#0a1a14] to-[#040a08] rounded-[2.5rem] md:rounded-[4rem] border border-emerald-500/20 text-center overflow-hidden shadow-2xl">
           <div className="relative z-10">
-            <h2 className="text-2xl md:text-5xl font-black text-white mb-4 md:mb-6 tracking-tight uppercase italic">Ready to make a difference?</h2>
+            <h2 className="text-2xl md:text-5xl font-black text-white mb-4 md:mb-6 tracking-tight uppercase">Ready to make a difference?</h2>
             <p className="text-gray-400 text-xs md:text-lg mb-8 md:mb-12 max-w-lg mx-auto leading-relaxed italic">
               "Every report counts towards a better city."
             </p>
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="group relative inline-flex items-center gap-3 bg-emerald-600 hover:bg-emerald-500 text-white px-8 md:px-12 py-4 md:py-5 rounded-full font-black uppercase tracking-widest text-[10px] md:text-base transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)] active:scale-95 w-full md:w-auto justify-center"
+              className="group relative inline-flex items-center gap-3 bg-[#00592E] hover:bg-[#003d1f] text-white px-8 md:px-12 py-4 md:py-5 rounded-full font-black uppercase tracking-widest text-[10px] md:text-base transition-all shadow-[0_0_30px_rgba(0,89,46,0.3)] active:scale-95 w-full md:w-auto justify-center border border-white/10"
             >
               Report an issue
               <Zap size={16} className="md:w-5 md:h-5 group-hover:fill-current transition-all" />
@@ -147,10 +162,8 @@ const UserDashboard = () => {
         </section>
       </main>
 
-      {/* --- MODAL --- */}
       <ReportModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
-      {/* --- CUSTOM SWIPER/SCROLLBAR STYLES --- */}
       <style dangerouslySetInnerHTML={{ __html: `
         .swiper-pagination-bullet { background: rgba(255,255,255,0.1) !important; opacity: 1 !important; }
         .swiper-pagination-bullet-active { background: #10b981 !important; width: 24px !important; border-radius: 4px !important; transition: all 0.3s !important; }

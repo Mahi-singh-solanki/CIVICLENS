@@ -63,7 +63,7 @@ const CivicLensLanding = () => {
     { src: ForestRoad, alt: "Infrastructure Issues" },
     { src: Underwater, alt: "Environmental Concerns" },
     { src: Lamppost, alt: "Utility Maintenance" },
-    { src: Flood, alt: "Urban Flooding" },
+    { src: Flood, alt: "Lack of greenery" },
   ];
 
   return (
@@ -83,33 +83,33 @@ const CivicLensLanding = () => {
             <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="lg:hidden text-gray-400 hover:text-white transition-colors">
               {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
-            <Link to="/about" className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[9px] md:text-[10px] font-bold">About</Link>
+            <Link to="/about" className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[9px] md:text-[10px] font-semibold">About</Link>
             
             <div className="hidden lg:flex items-center gap-12">
               {!isAdminOrAuth && (
                 <>
-                  <button onClick={handleComplaintsClick} className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[10px] font-bold bg-transparent border-none cursor-pointer">Complaints</button>
-                  <Link to="/community" className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[10px] font-bold">Feed</Link>
+                  <button onClick={handleComplaintsClick} className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[10px] font-semibold bg-transparent border-none cursor-pointer">Complaints</button>
+                  <Link to="/community" className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[10px] font-semibold">Feed</Link>
                 </>
               )}
-              <Link to="/help" className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[10px] font-bold">Help</Link>
+              <Link to="/help" className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[10px] font-semibold">Help</Link>
             </div>
           </div>
 
           <div className="flex items-center gap-4 md:gap-6 ml-4 pl-4 md:pl-8 border-l border-white/10">
             {!isLoggedIn ? (
               <div className="flex items-center gap-3 md:gap-6">
-                <Link to="/login" className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[9px] md:text-[10px] font-bold flex items-center gap-2">
+                <Link to="/login" className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[9px] md:text-[10px] font-semibold flex items-center gap-2">
                   <LogIn size={14}/> <span className="hidden sm:inline">Login</span>
                 </Link>
-                <button onClick={() => navigate("/signup")} className="bg-emerald-500 hover:bg-emerald-400 text-[#050d0a] px-5 py-2 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-tighter transition-all">
+                <button onClick={() => navigate("/signup")} className="bg-[#00592E] text-white px-5 py-2 rounded-full text-[9px] md:text-[10px] font-semibold uppercase tracking-tighter transition-all">
                   Join
                 </button>
               </div>
             ) : (
               <div className="relative" ref={dropdownRef}>
                 <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 p-1 rounded-full transition-all">
-                  <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-600 flex items-center justify-center text-[10px] font-black shadow-lg">
+                  <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-[#00592E] flex items-center justify-center text-[10px] font-black shadow-lg">
                     {(user.username?.[0] || user.email[0]).toUpperCase()}
                   </div>
                   <ChevronDown size={14} className={`text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -134,36 +134,38 @@ const CivicLensLanding = () => {
           <div className="lg:hidden w-full max-w-[90%] bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/5 rounded-3xl p-6 flex flex-col gap-6 animate-in slide-in-from-top-4 duration-300 shadow-2xl">
             {!isAdminOrAuth && (
               <>
-                <button onClick={(e) => { handleComplaintsClick(e); setIsMobileMenuOpen(false); }} className="text-left text-gray-400 hover:text-emerald-400 uppercase tracking-[0.2em] text-[10px] font-bold">Complaints</button>
-                <Link to="/community" onClick={() => setIsMobileMenuOpen(false)} className="text-left text-gray-400 hover:text-emerald-400 uppercase tracking-[0.2em] text-[10px] font-bold">Feed</Link>
+                <button onClick={(e) => { handleComplaintsClick(e); setIsMobileMenuOpen(false); }} className="text-left text-gray-400 hover:text-emerald-400 uppercase tracking-[0.2em] text-[10px] font-semibold">Complaints</button>
+                <Link to="/community" onClick={() => setIsMobileMenuOpen(false)} className="text-left text-gray-400 hover:text-emerald-400 uppercase tracking-[0.2em] text-[10px] font-semibold">Feed</Link>
               </>
             )}
-            <Link to="/help" onClick={() => setIsMobileMenuOpen(false)} className="text-left text-gray-400 hover:text-emerald-400 uppercase tracking-[0.2em] text-[10px] font-bold">Help Center</Link>
+            <Link to="/help" onClick={() => setIsMobileMenuOpen(false)} className="text-left text-gray-400 hover:text-emerald-400 uppercase tracking-[0.2em] text-[10px] font-semibold">Help Center</Link>
           </div>
         )}
       </nav>
 
       {/* --- HERO SECTION --- */}
       <header className="relative max-w-5xl mx-auto text-center pt-20 md:pt-24 pb-20 px-6 flex flex-col items-center">
-        <h1 className="text-5xl md:text-8xl font-medium tracking-tighter mb-4 text-white uppercase leading-none italic">CIVICLENS</h1>
+        {/* Changed to Medium Weight and Normal Style */}
+        <h1 className="text-5xl md:text-8xl font-medium tracking-tighter mb-4 text-white uppercase leading-none">CIVICLENS</h1>
+        {/* Italic Instrument Sans */}
         <p className="text-xl md:text-4xl italic font-light mb-8 tracking-tight text-emerald-100/60 leading-tight">"From Complaint to Resolution — With Accountability."</p>
-        <p className="text-[10px] md:text-xs text-gray-500 max-w-xl mx-auto mb-10 leading-relaxed uppercase tracking-widest italic font-light">
+        <p className="text-[10px] md:text-xs text-gray-500 max-w-xl mx-auto mb-10 leading-relaxed uppercase tracking-widest font-light">
           Report issues, follow their status in real-time, and know exactly who's responsible.
         </p>
         
-        {/* Fixed Center Aligned Button Container */}
         <div className="flex justify-center w-full px-4">
           {!isLoggedIn ? (
             <button 
               onClick={() => navigate("/signup")} 
-              className="bg-[#00592E] hover:bg-emerald-600 text-white px-8 md:px-16 py-4 rounded-full font-black uppercase tracking-widest text-[11px] md:text-sm shadow-lg active:scale-95 transition-all w-full md:w-auto max-w-[300px] md:max-w-none mx-auto"
+              className="bg-[#00592E] hover:bg-emerald-600 text-white px-8 md:px-16 py-4 rounded-full font-semibold uppercase tracking-widest text-[11px] md:text-sm shadow-lg active:scale-95 transition-all w-full md:w-auto max-w-[300px] md:max-w-none mx-auto"
             >
               Get Started Now
             </button>
           ) : (
             <button 
               onClick={handleRoleBasedRedirect} 
-              className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 md:px-20 py-4 md:py-5 rounded-full font-black uppercase tracking-widest text-[11px] md:text-base shadow-lg active:scale-95 transition-all flex items-center justify-center gap-3 w-full md:w-auto max-w-[340px] md:max-w-none mx-auto"
+              // Changed font to Regular (font-normal)
+              className="bg-[#00592E] hover:bg-[#00381D] text-white px-8 md:px-20 py-4 md:py-5 rounded-full font-normal uppercase tracking-widest text-[11px] md:text-base shadow-lg active:scale-95 transition-all flex items-center justify-center gap-3 w-full md:w-auto max-w-[340px] md:max-w-none mx-auto"
             >
               {user.role === "Admin" ? <Settings size={20} /> : <ShieldCheck size={20} />} 
               <span className="whitespace-nowrap">Go to {user.role} Portal</span>
@@ -174,14 +176,14 @@ const CivicLensLanding = () => {
 
       {/* --- CAROUSEL --- */}
       <section className="mb-32 px-6">
-        <div className="max-w-7xl mx-auto">
-          <Swiper modules={[Pagination, Autoplay, Navigation]} spaceBetween={30} slidesPerView={1} loop={true} autoplay={{ delay: 3000 }} pagination={{ clickable: true }} navigation={true} breakpoints={{ 768: { slidesPerView: 2 }, 1024: { slidesPerView: 4 } }}>
+        <div className="max-w-8xl mx-auto">
+          <Swiper modules={[Pagination, Autoplay, Navigation]} spaceBetween={30} slidesPerView={1} loop={true} autoplay={{ delay: 3000 }} pagination={{ clickable: true }} navigation={true} breakpoints={{ 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }}>
             {galleryImages.map((img, i) => (
               <SwiperSlide key={i}>
-                <div className="h-[300px] md:h-[400px] rounded-[2.5rem] overflow-hidden border border-white/10 relative group">
+                <div className="h-[300px] md:h-[450px] rounded-[2.5rem] overflow-hidden border border-white/10 relative group">
                   <img src={img.src} alt={img.alt} className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 flex items-end p-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <p className="text-emerald-400 font-bold uppercase text-xs tracking-widest">{img.alt}</p>
+                    <p className="text-emerald-400 font-semibold uppercase text-xs tracking-widest">{img.alt}</p>
                   </div>
                 </div>
               </SwiperSlide>
@@ -191,10 +193,10 @@ const CivicLensLanding = () => {
       </section>
 
       {/* --- METRICS SECTION --- */}
-      <section className="px-6 mb-40">
+      <section className="px-6 mb-40 font-semibold">
         <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2 uppercase tracking-tighter italic text-white">Accountability You Can Measure</h2>
-          <p className="text-gray-500 text-[10px] mb-16 font-light tracking-widest uppercase italic text-center">Real metrics from real resolutions. No hidden data, no empty promises.</p>
+          <h2 className="text-2xl md:text-3xl font-semibold mb-2 uppercase tracking-tighter text-white">Accountability You Can Measure</h2>
+          <p className="text-gray-500 text-[10px] mb-16 font-semibold tracking-widest uppercase text-center">Real metrics from real resolutions. No hidden data, no empty promises.</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-16">
             {[
               { label: "Active users & growing", value: "15000+" },
@@ -203,8 +205,8 @@ const CivicLensLanding = () => {
               { label: "Transparency", value: "100%" }
             ].map((s, i) => (
               <div key={i} className="bg-[#0a1a14] border border-white/5 p-6 md:p-10 rounded-2xl h-44 md:h-52 flex flex-col justify-center transition-all hover:border-emerald-500/30">
-                <div className="text-2xl md:text-3xl font-bold text-white mb-2">{s.value}</div>
-                <div className="text-[9px] md:text-[10px] uppercase tracking-widest text-emerald-500 font-bold">{s.label}</div>
+                <div className="text-2xl md:text-3xl font-semibold text-white mb-2">{s.value}</div>
+                <div className="text-[9px] md:text-[10px] uppercase tracking-widest text-emerald-500 font-semibold">{s.label}</div>
               </div>
             ))}
           </div>
@@ -212,11 +214,11 @@ const CivicLensLanding = () => {
       </section>
 
       {/* --- READY TO MAKE A DIFFERENCE SECTION --- */}
-      <section className="max-w-6xl mx-auto w-full px-8 mb-40 flex flex-col md:flex-row gap-16 md:gap-20">
+      <section className="max-w-6xl mx-auto w-full px-8 mb-40 flex flex-col md:flex-row gap-16 md:gap-20 font-semibold">
         <div className="flex-1 text-center md:text-left">
-          <h2 className="text-4xl md:text-6xl font-bold leading-tight mb-6 uppercase tracking-tighter italic">Ready to Make a Difference?</h2>
-          <p className="text-gray-400 text-lg font-light mb-10 max-w-md mx-auto md:mx-0 italic">Join thousands of citizens who are actively shaping their communities. Your voice matters.</p>
-          <button onClick={() => navigate("/signup")} className="bg-[#00381d] hover:bg-[#00592E] text-white px-8 md:px-10 py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 border border-emerald-900/50 uppercase tracking-widest italic transition-all mx-auto md:mx-0 w-full md:w-auto">
+          <h2 className="text-4xl md:text-6xl font-semibold leading-tight mb-6 uppercase tracking-tighter">Ready to Make a Difference?</h2>
+          <p className="text-gray-400 text-lg font-semibold mb-10 max-w-md mx-auto md:mx-0">Join thousands of citizens who are actively shaping their communities. Your voice matters.</p>
+          <button onClick={() => navigate("/signup")} className="bg-[#00381d] hover:bg-[#00592E] text-white px-8 md:px-10 py-3 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 border border-emerald-900/50 uppercase tracking-widest transition-all mx-auto md:mx-0 w-full md:w-auto">
             Get Started Free <ArrowRight size={16} />
           </button>
         </div>
@@ -229,15 +231,15 @@ const CivicLensLanding = () => {
       </section>
 
       {/* --- FOOTER --- */}
-      <footer className="bg-[#020705] border-t border-white/5 py-16 md:py-20 px-8 mt-auto text-gray-600">
+      <footer className="bg-[#020705] border-t border-white/5 py-16 md:py-20 px-8 mt-auto text-gray-600 font-semibold">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12">
           <div className="col-span-2 md:col-span-1">
-            <h3 className="font-bold text-white mb-4 uppercase italic tracking-widest text-center md:text-left">CIVICLENS</h3>
-            <p className="text-[10px] italic font-light leading-relaxed text-center md:text-left">Transparent civic engagement for a better community.</p>
+            <h3 className="font-semibold text-white mb-4 uppercase tracking-widest text-center md:text-left">CIVICLENS</h3>
+            <p className="text-[10px] font-semibold leading-relaxed text-center md:text-left">Transparent civic engagement for a better community.</p>
           </div>
-          <div><h4 className="text-[10px] font-bold text-white mb-6 uppercase tracking-widest">Platform</h4><ul className="text-[10px] space-y-3 uppercase tracking-tighter font-medium"><li className="hover:text-emerald-400 transition-colors cursor-pointer">Impact Map</li><li className="hover:text-emerald-400 transition-colors cursor-pointer">Report Issue</li></ul></div>
-          <div><h4 className="text-[10px] font-bold text-white mb-6 uppercase tracking-widest">Resources</h4><ul className="text-[10px] space-y-3 uppercase tracking-tighter font-medium"><li className="hover:text-emerald-400 transition-colors cursor-pointer">About us</li><li className="hover:text-emerald-400 transition-colors cursor-pointer">Help Center</li></ul></div>
-          <div><h4 className="text-[10px] font-bold text-white mb-6 uppercase tracking-widest">Legal</h4><ul className="text-[10px] space-y-3 uppercase tracking-tighter font-medium"><li className="hover:text-emerald-400 transition-colors cursor-pointer">Privacy</li><li className="hover:text-emerald-400 transition-colors cursor-pointer">Terms</li></ul></div>
+          <div><h4 className="text-[10px] font-semibold text-white mb-6 uppercase tracking-widest">Platform</h4><ul className="text-[10px] space-y-3 uppercase tracking-tighter font-semibold"><li className="hover:text-emerald-400 transition-colors cursor-pointer">Impact Map</li><li className="hover:text-emerald-400 transition-colors cursor-pointer">Report Issue</li></ul></div>
+          <div><h4 className="text-[10px] font-semibold text-white mb-6 uppercase tracking-widest">Resources</h4><ul className="text-[10px] space-y-3 uppercase tracking-tighter font-semibold"><li className="hover:text-emerald-400 transition-colors cursor-pointer">About us</li><li className="hover:text-emerald-400 transition-colors cursor-pointer">Help Center</li></ul></div>
+          <div><h4 className="text-[10px] font-semibold text-white mb-6 uppercase tracking-widest">Legal</h4><ul className="text-[10px] space-y-3 uppercase tracking-tighter font-semibold"><li className="hover:text-emerald-400 transition-colors cursor-pointer">Privacy</li><li className="hover:text-emerald-400 transition-colors cursor-pointer">Terms</li></ul></div>
         </div>
       </footer>
     </div>
@@ -245,12 +247,12 @@ const CivicLensLanding = () => {
 };
 
 const FeatureCard = ({ title, desc, icon }) => (
-  <div className="bg-gradient-to-r from-[#0a1a14] to-transparent p-6 md:p-8 rounded-2xl border-l-4 border-emerald-800 hover:translate-x-2 transition-transform duration-300">
+  <div className="bg-gradient-to-r from-[#0a1a14] to-transparent p-6 md:p-8 rounded-2xl border-l-4 border-emerald-800 hover:translate-x-2 transition-transform duration-300 font-semibold">
     <div className="flex gap-4 md:gap-6 items-start">
       <div className="p-3 bg-emerald-950 rounded-xl border border-emerald-800/50">{icon}</div>
       <div>
-        <h4 className="font-bold text-lg md:text-xl mb-1 md:mb-2 uppercase tracking-tighter italic text-white">{title}</h4>
-        <p className="text-[9px] md:text-[10px] text-gray-500 font-light uppercase tracking-widest italic leading-relaxed">{desc}</p>
+        <h4 className="font-semibold text-lg md:text-xl mb-1 md:mb-2 uppercase tracking-tighter text-white">{title}</h4>
+        <p className="text-[9px] md:text-[10px] text-gray-500 font-semibold uppercase tracking-widest leading-relaxed">{desc}</p>
       </div>
     </div>
   </div>
