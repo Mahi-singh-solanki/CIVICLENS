@@ -1,46 +1,79 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { 
-  ArrowRight, MapPin, BarChart3, Lightbulb, 
+import {
+  ArrowRight, MapPin, BarChart3, Lightbulb,
   LayoutDashboard, LogOut, ChevronDown, LogIn, ShieldCheck,
   Settings, Clock, Menu, X, PlusCircle
 } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay, Navigation } from "swiper/modules";
-import { useAuth } from "../../context/AuthContext";
-
-// Swiper Styles
+import Apiclient from "../api/Api";
+import { Slab } from "react-loading-indicators";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-// Local Images
-import ForestRoad from "../_3.jpeg";
-import Underwater from "../At.jpeg";
-import Lamppost from "../Lamppost.jpeg";
-import Flood from "../download.jpeg";
+import ForestRoad from "../assets/_3.jpeg";
+import Underwater from "../assets/At.jpeg";
+import Lamppost from "../assets/Lamppost.jpeg";
+import Flood from "../assets/download.jpeg";
 
 const CivicLensLanding = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [user, Setuser] = useState(null);
 
-  const isLoggedIn = !!user;
-  const isAdminOrAuth = user?.role === "Admin" || user?.role === "Government Authority";
+  const token = localStorage.getItem("Token");
+  const isLoggedIn = !!token && !!user;
+  const isAdminOrAuth = user?.role === "Admin" || user?.role === "Authority";
+
+  const logout = () => {
+    localStorage.clear();
+    Setuser(null);
+    navigate("/");
+  };
+
+  const checkUser = async () => {
+    const Token = localStorage.getItem("Token");
+
+    if (!Token) {
+      Setuser(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await Apiclient.get("/user/me", {
+        headers: { Authorization: Token },
+      });
+
+      Setuser(response.data);
+    } catch (err) {
+      localStorage.clear();
+      Setuser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkUser();
+  }, []);
 
   const handleRoleBasedRedirect = () => {
     if (!isLoggedIn) { navigate("/signup"); return; }
     if (user.role === "Admin") navigate("/admin");
-    else if (user.role === "Government Authority") navigate("/authority");
+    else if (user.role === "Authority") navigate("/authority");
     else navigate("/user-home");
   };
 
   const handleDashboardLink = () => {
     setIsDropdownOpen(false);
     if (user?.role === "Admin") navigate("/admin");
-    else if (user?.role === "Government Authority") navigate("/authority");
+    else if (user?.role === "Authority") navigate("/authority");
     else navigate("/user-stats");
   };
 
@@ -66,26 +99,30 @@ const CivicLensLanding = () => {
     { src: Lamppost, alt: "Utility Maintenance" },
     { src: Flood, alt: "Lack of greenery" },
   ];
-
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black text-white">
+        <Slab color="#006e39" size="medium" text="" textColor="" />
+      </div>
+    );
+  }
   return (
     <div className="relative min-h-screen bg-[#050d0a] text-white font-instrument flex flex-col overflow-x-hidden">
-      
-      {/* Background Blurs */}
+
       <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[1000px] h-[1000px] bg-emerald-900/20 blur-[150px] rounded-full" />
         <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-emerald-500/10 blur-[120px] rounded-full animate-pulse" />
       </div>
 
-      {/* --- NAVBAR --- */}
       <nav className="flex flex-col items-center justify-center py-8 px-4 w-full relative z-50 gap-4">
         <div className="bg-[#0a0a0a]/80 backdrop-blur-2xl rounded-full px-6 md:px-10 py-3 flex items-center justify-between border border-white/5 text-sm font-medium text-gray-300 shadow-2xl w-full max-w-5xl">
-          
+
           <div className="flex items-center gap-4 md:gap-12">
             <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="lg:hidden text-gray-400 hover:text-white transition-colors">
               {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
-            <Link to="/about" className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[9px] md:text-[10px] font-semibold">About</Link>
-            
+            <Link to="/about" className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[9px] md:text-[10px] font-semibold hidden lg:block ">About</Link>
+
             <div className="hidden lg:flex items-center gap-12">
               {!isAdminOrAuth && (
                 <>
@@ -101,7 +138,7 @@ const CivicLensLanding = () => {
             {!isLoggedIn ? (
               <div className="flex items-center gap-3 md:gap-6">
                 <Link to="/login" className="hover:text-emerald-400 transition-colors uppercase tracking-[0.2em] text-[9px] md:text-[10px] font-semibold flex items-center gap-2">
-                  <LogIn size={14}/> <span className="hidden sm:inline">Login</span>
+                  <LogIn size={14} /> <span className="hidden sm:inline">Login</span>
                 </Link>
                 <button onClick={() => navigate("/signup")} className="bg-[#00592E] text-white px-5 py-2 rounded-full text-[9px] md:text-[10px] font-semibold uppercase tracking-tighter transition-all">
                   Join
@@ -111,7 +148,7 @@ const CivicLensLanding = () => {
               <div className="relative" ref={dropdownRef}>
                 <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 p-1 rounded-full transition-all">
                   <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-[#00592E] flex items-center justify-center text-[10px] font-black shadow-lg">
-                    {(user.username?.[0] || user.email[0]).toUpperCase()}
+                    {user.name?.[0].toUpperCase()}
                   </div>
                   <ChevronDown size={14} className={`text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -119,10 +156,10 @@ const CivicLensLanding = () => {
                 {isDropdownOpen && (
                   <div className="absolute top-full right-0 mt-4 w-56 bg-[#0b1410] border border-white/10 rounded-2xl p-4 shadow-2xl z-50">
                     <button onClick={handleDashboardLink} className="w-full flex items-center gap-3 px-3 py-3 hover:bg-white/5 rounded-xl transition-colors text-[10px] uppercase font-bold tracking-widest text-gray-300">
-                      <LayoutDashboard size={16} className="text-emerald-500" /> 
-                      {user.role === "User" ? "My Dashboard" : "Portal"}
+                      <LayoutDashboard size={16} className="text-emerald-500" />
+                      {user.role === "civilian" ? "My Dashboard" : "Portal"}
                     </button>
-                    {user.role === "User" && (
+                    {user.role === "civilian" && (
                       <button onClick={() => { navigate("/user-home"); setIsDropdownOpen(false); }} className="w-full flex items-center gap-3 px-3 py-3 hover:bg-emerald-500/10 rounded-xl transition-colors text-[10px] uppercase font-bold tracking-widest text-emerald-400 mt-1">
                         <PlusCircle size={16} /> Make a Complaint
                       </button>
@@ -138,6 +175,60 @@ const CivicLensLanding = () => {
           </div>
         </div>
       </nav>
+      {isMobileMenuOpen && (
+  <div className="lg:hidden fixed inset-0 z-50 flex">
+
+    {/* BACKDROP */}
+    <div 
+      className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+      onClick={() => setIsMobileMenuOpen(false)}
+    />
+
+    {/* SIDEBAR */}
+    <div className="relative w-[60%] max-w-xs bg-[#0b1410] h-full p-6 flex flex-col gap-6 
+                    transform transition-transform duration-300 ease-in-out 
+                    translate-x-0">
+
+      {/* CLOSE BUTTON */}
+      <button 
+        onClick={() => setIsMobileMenuOpen(false)} 
+        className="self-end mb-4"
+      >
+        <X size={24} />
+      </button>
+
+      {/* MENU ITEMS */}
+      {!isAdminOrAuth && (
+        <>
+          <button 
+            onClick={(e) => {handleComplaintsClick(e); setIsMobileMenuOpen(false);}} 
+            className="text-left hover:text-green-800 cursor-pointer text-lg"
+          >
+            Complaints
+          </button>
+
+          <Link 
+            to="/community" 
+            onClick={() => setIsMobileMenuOpen(false)} 
+            className="text-lg"
+          >
+            Feed
+          </Link>
+        </>
+      )}
+
+      <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-lg">
+        About
+      </Link>
+
+      <Link to="/help" onClick={() => setIsMobileMenuOpen(false)} className="text-lg">
+        Help
+      </Link>
+    </div>
+  </div>
+)}
+
+      {/* EVERYTHING BELOW REMAINS EXACTLY SAME — NO CHANGE */}
 
       {/* --- HERO SECTION WITH MATCHING BUTTON COLORS --- */}
       <header className="relative max-w-5xl mx-auto text-center pt-20 md:pt-24 pb-20 px-6 flex flex-col items-center">
@@ -146,11 +237,11 @@ const CivicLensLanding = () => {
         <p className="text-[10px] md:text-xs text-gray-500 max-w-xl mx-auto mb-10 leading-relaxed uppercase tracking-widest font-light">
           Report issues, follow their status in real-time, and know exactly who's responsible.
         </p>
-        
+
         <div className="flex flex-col md:flex-row justify-center items-center w-full px-4 gap-4">
           {!isLoggedIn ? (
-            <button 
-              onClick={() => navigate("/signup")} 
+            <button
+              onClick={() => navigate("/signup")}
               className="bg-[#00592E] hover:bg-emerald-600 text-white px-8 md:px-16 py-4 rounded-full font-semibold uppercase tracking-widest text-[11px] md:text-sm shadow-lg active:scale-95 transition-all w-full md:w-auto max-w-[300px] md:max-w-none"
             >
               Get Started Now
@@ -158,8 +249,8 @@ const CivicLensLanding = () => {
           ) : (
             <>
               {isAdminOrAuth ? (
-                <button 
-                  onClick={handleRoleBasedRedirect} 
+                <button
+                  onClick={handleRoleBasedRedirect}
                   className="bg-[#00592E] hover:bg-[#00381D] text-white px-8 md:px-20 py-4 md:py-5 rounded-full font-normal uppercase tracking-widest text-[11px] md:text-base shadow-lg active:scale-95 transition-all flex items-center justify-center gap-3 w-full md:w-auto max-w-[340px] md:max-w-none"
                 >
                   <Settings size={20} /> <span>Go to {user.role} Portal</span>
@@ -167,17 +258,17 @@ const CivicLensLanding = () => {
               ) : (
                 <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
                   {/* BOTH BUTTONS NOW USE THE SAME EMERALD GREEN THEME */}
-                  <button 
-                    onClick={() => navigate("/user-stats")} 
+                  <button
+                    onClick={() => navigate("/user-stats")}
                     className="bg-[#00592E] hover:bg-emerald-600 text-white px-8 md:px-12 py-4 rounded-full font-semibold uppercase tracking-widest text-[11px] md:text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 w-full sm:w-auto"
                   >
-                    <LayoutDashboard size={18}/> My Dashboard
+                    <LayoutDashboard size={18} /> My Dashboard
                   </button>
-                  <button 
-                    onClick={() => navigate("/user-home")} 
+                  <button
+                    onClick={() => navigate("/user-home")}
                     className="bg-[#00592E] hover:bg-emerald-600 text-white px-8 md:px-12 py-4 rounded-full font-semibold uppercase tracking-widest text-[11px] md:text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 w-full sm:w-auto"
                   >
-                    <PlusCircle size={18}/> Make a Complaint
+                    <PlusCircle size={18} /> Make a Complaint
                   </button>
                 </div>
               )}
@@ -226,11 +317,11 @@ const CivicLensLanding = () => {
       </section>
 
       {/* --- READY TO MAKE A DIFFERENCE SECTION --- */}
-      <section className="max-w-6xl mx-auto w-full px-8 mb-40 flex flex-col md:flex-row gap-16 md:gap-20 font-semibold">
+      {!isAdminOrAuth ? <section className="max-w-6xl mx-auto w-full px-8 mb-40 flex flex-col md:flex-row gap-16 md:gap-20 font-semibold">
         <div className="flex-1 text-center md:text-left">
           <h2 className="text-4xl md:text-6xl font-semibold leading-tight mb-6 uppercase tracking-tighter">Ready to Make a Difference?</h2>
           <p className="text-gray-400 text-lg font-semibold mb-10 max-w-md mx-auto md:mx-0">Join thousands of citizens who are actively shaping their communities. Your voice matters.</p>
-          <button onClick={() => navigate("/signup")} className="bg-[#00381d] hover:bg-[#00592E] text-white px-8 md:px-10 py-3 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 border border-emerald-900/50 uppercase tracking-widest transition-all mx-auto md:mx-0 w-full md:w-auto">
+          <button onClick={() => { isLoggedIn ? navigate("/user-stats") : navigate("/login") }} className="bg-[#00381d] hover:bg-[#00592E] text-white px-8 md:px-10 py-3 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 border border-emerald-900/50 uppercase tracking-widest transition-all mx-auto md:mx-0 w-full md:w-auto">
             Get Started Free <ArrowRight size={16} />
           </button>
         </div>
@@ -240,7 +331,7 @@ const CivicLensLanding = () => {
           <FeatureCard title="Track Progress" desc="Watch your report move through stages." icon={<Clock size={20} className="text-emerald-500" />} />
           <FeatureCard title="Share Ideas" desc="Suggest improvements and vote on proposals." icon={<Lightbulb size={20} className="text-emerald-500" />} />
         </div>
-      </section>
+      </section> : <></>}
 
       {/* --- FOOTER --- */}
       <footer className="bg-[#020705] border-t border-white/5 py-16 md:py-20 px-8 mt-auto text-gray-600 font-semibold">

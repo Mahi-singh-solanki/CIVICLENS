@@ -1,30 +1,27 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { ReportProvider } from './context/ReportContext'; 
 
 // Pages & Components
-import Signup from './assets/pages/Signup';
-import Login from './assets/pages/Login';
-import ProtectedRoute from './assets/Components/ProtectedRoute';
-import CivicLensLanding from './assets/Components/CivicLensLanding';
-import AuthorityDashboard from './assets/Components/AuthorityDashboard'; 
-import AdminDashboard from './assets/pages/AdminDashboard';
-import HelpPage from './assets/pages/HelpPage'; 
-import AboutPage from './assets/pages/AboutPage'; 
-import CommunityFeed from './assets/pages/CommunityFeed';
-import Chatbot from './assets/Components/Chatbot/Chatbot'; // Import Chatbot
+import Signup from './pages/Signup';
+import Login from './pages/Login';
+import ProtectedRoute from './Components/ProtectedRoute';
+import CivicLensLanding from './Components/CivicLensLanding';
+import AuthorityDashboard from './Components/AuthorityDashboard'; 
+import AdminDashboard from './pages/AdminDashboard';
+import HelpPage from './pages/HelpPage'; 
+import AboutPage from './pages/AboutPage'; 
+import CommunityFeed from './pages/CommunityFeed';
+import Chatbot from './Components/Chatbot/Chatbot'; // Import Chatbot
 
 // User specific dashboard pages
-import UserDashboard from './assets/pages/UserDashboard';
-import UserAnalytics from './assets/pages/UserAnalytics';
+import UserDashboard from './pages/UserDashboard';
+import UserAnalytics from './pages/UserAnalytics';
 
 import './App.css';
 
 function App() {
   return (
-    <AuthProvider>
-      <ReportProvider>
+   
         <Router>
           <Chatbot />
           <Routes>
@@ -40,8 +37,12 @@ function App() {
             <Route 
               path="/user-home" 
               element={
-                <ProtectedRoute allowedRole="Normal User">
+                <ProtectedRoute allowedRole="civilian">
+                  <>
                   <UserDashboard />
+                  <Chatbot />
+
+                  </>
                 </ProtectedRoute>
               } 
             />
@@ -49,8 +50,10 @@ function App() {
             <Route 
               path="/user-stats" 
               element={
-                <ProtectedRoute allowedRole="Normal User">
-                  <UserAnalytics />
+                <ProtectedRoute allowedRole="civilian">
+                  <><UserAnalytics />
+                  <Chatbot />
+                  </>
                 </ProtectedRoute>
               } 
             />
@@ -59,7 +62,7 @@ function App() {
             <Route 
               path="/authority" 
               element={
-                <ProtectedRoute allowedRole="Government Authority">
+                <ProtectedRoute allowedRole="Authority">
                   <AuthorityDashboard />
                 </ProtectedRoute>
               } 
@@ -79,8 +82,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
-      </ReportProvider>
-    </AuthProvider>
+
   );
 }
 

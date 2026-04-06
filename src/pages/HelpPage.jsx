@@ -25,7 +25,7 @@ const HelpPage = () => {
         >
           <ArrowLeft size={16} /> Back
         </button>
-        <h1 className="text-xl font-bold tracking-[0.2em] uppercase">CivicLens <span className="text-emerald-500">Support</span></h1>
+        <h1 className="text-sm sm:text-xl sm:ml-0 ml-5 font-bold tracking-[0.2em] uppercase">CivicLens <span className="text-emerald-500">Support</span></h1>
       </nav>
 
       <main className="max-w-7xl mx-auto px-8 py-12">

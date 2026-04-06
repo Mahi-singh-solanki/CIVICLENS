@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 import ReportModal from '../Components/ReportModal';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import { LogOut, MapPin, Sparkles, ShieldCheck, Zap, ArrowLeft } from 'lucide-react';
-
+import Apiclient from '../api/Api';
+import { Slab } from "react-loading-indicators";
 // Swiper Styles
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
 const UserDashboard = () => {
-  const { user, logout } = useAuth();
+  const [loading, setLoading] = useState(true); // start as true
+  const [username, setUsername] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -21,10 +23,61 @@ const UserDashboard = () => {
     { id: 2, before: "images/roadpot.jpeg", after: "images/cleanroad.jpeg", text: "Potholes cleared from the road" },
     { id: 3, before: "images/garbagepark.jpeg", after: "images/cleanpark.jpeg", text: "Public park restored" }
   ];
+  const logout = () => {
+    localStorage.clear();
+    navigate("/");
+  }
+  const checkUser = async () => {
+  const token = localStorage.getItem("Token");
 
+
+  if (!token) {
+    setIsAuthenticated(false);
+    setLoading(false);
+    navigate("/login");
+    return;
+  }
+
+  try {
+    const response = await Apiclient.get("/user/me", {
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    setUsername(response.data.name);
+    setIsAuthenticated(true);
+
+  } catch (err) {
+    console.log(err);
+
+    // invalid / expired token
+    localStorage.clear();
+    setIsAuthenticated(false);
+    navigate("/login");
+
+  } finally {
+    setLoading(false);
+  }
+};
+
+  useEffect(() => {
+    checkUser()
+  }, [])
+if (loading) {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black">
+      <Slab color="#006e39" size="medium" text="" textColor="" />
+    </div>
+  );
+}
+
+if (!isAuthenticated) {
+  return null; // prevent UI flash
+}
   return (
     <div className="min-h-screen bg-[#020604] text-gray-200 font-instrument selection:bg-emerald-500/30 overflow-x-hidden">
-      
+
       {/* --- PREMIUM BACKGROUND GRADIENTS --- */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-5%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-emerald-900/10 blur-[120px] rounded-full" />
@@ -34,38 +87,38 @@ const UserDashboard = () => {
       {/* --- BRANDED NAVBAR --- */}
       <nav className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/5 bg-[#08100d]/80 px-4 md:px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          
+
           {/* Left: Back Button + Logo */}
           <div className="flex items-center gap-4 md:gap-8">
-            <button 
-              onClick={() => navigate('/')} 
+            <button
+              onClick={() => navigate('/')}
               className="flex items-center gap-2 text-gray-500 hover:text-white transition-all uppercase text-[9px] md:text-[10px] font-black tracking-[0.2em]"
             >
               <ArrowLeft size={18} />
             </button>
-            
+
             <div className="flex items-center gap-2 md:gap-3 cursor-pointer" onClick={() => navigate('/')}>
-              <img 
-                src="/images/logo.png" 
-                alt="CivicLens Logo" 
-                className="h-6 md:h-8 w-auto object-contain" 
+              <img
+                src="/images/logo.png"
+                alt="CivicLens Logo"
+                className="h-6 md:h-8 w-auto object-contain"
               />
               <span className="hidden sm:block text-white text-lg font-bold tracking-widest uppercase italic">
                 CIVICLENS
               </span>
             </div>
           </div>
-          
+
           {/* Right: User Profile & Logout */}
           <div className="flex items-center gap-4 md:gap-6">
             <div className="flex flex-col items-end text-right">
               <p className="text-[8px] md:text-[10px] text-emerald-500 font-black uppercase tracking-widest">Active Citizen</p>
               <span className="text-xs md:text-sm font-medium text-white/80 truncate max-w-[100px] md:max-w-none">
-                {user?.username || user?.email?.split('@')[0]}
+                {username}
               </span>
             </div>
-            <button 
-              onClick={logout} 
+            <button
+              onClick={logout}
               className="p-2 hover:bg-red-500/10 text-red-400 rounded-full transition-all group"
             >
               <LogOut size={18} className="md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
@@ -75,7 +128,7 @@ const UserDashboard = () => {
       </nav>
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
-        
+
         {/* --- HERO SECTION --- */}
         <section className="text-center mb-16 md:mb-20">
           <h1 className="text-4xl md:text-7xl font-black text-white mb-4 md:mb-6 tracking-tighter leading-tight">
@@ -132,7 +185,7 @@ const UserDashboard = () => {
             <p className="text-gray-400 text-xs md:text-lg mb-8 md:mb-12 max-w-lg mx-auto leading-relaxed italic">
               "Every report counts towards a better city."
             </p>
-            <button 
+            <button
               onClick={() => setIsModalOpen(true)}
               className="group relative inline-flex items-center gap-3 bg-[#00592E] hover:bg-[#003d1f] text-white px-8 md:px-12 py-4 md:py-5 rounded-full font-black uppercase tracking-widest text-[10px] md:text-base transition-all shadow-[0_0_30px_rgba(0,89,46,0.3)] active:scale-95 w-full md:w-auto justify-center border border-white/10"
             >
@@ -144,27 +197,28 @@ const UserDashboard = () => {
 
         {/* --- FEATURE GRID --- */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-16 md:mt-24 pb-12 md:pb-20">
-          <FeatureCard 
-            icon={<MapPin className="text-emerald-500" size={20} />} 
-            title="Precise Location" 
-            desc="Automatic GPS tagging ensures authorities find the issue instantly." 
+          <FeatureCard
+            icon={<MapPin className="text-emerald-500" size={20} />}
+            title="Precise Location"
+            desc="Automatic GPS tagging ensures authorities find the issue instantly."
           />
-          <FeatureCard 
-            icon={<ShieldCheck className="text-emerald-500" size={20} />} 
-            title="Accountability" 
-            desc="Full audit trail for every report. Know who is fixing your city." 
+          <FeatureCard
+            icon={<ShieldCheck className="text-emerald-500" size={20} />}
+            title="Accountability"
+            desc="Full audit trail for every report. Know who is fixing your city."
           />
-          <FeatureCard 
-            icon={<Sparkles className="text-emerald-500" size={20} />} 
-            title="Civic Points" 
-            desc="Earn rewards and rank higher by contributing to your neighborhood." 
+          <FeatureCard
+            icon={<Sparkles className="text-emerald-500" size={20} />}
+            title="Civic Points"
+            desc="Earn rewards and rank higher by contributing to your neighborhood."
           />
         </section>
       </main>
 
       <ReportModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .swiper-pagination-bullet { background: rgba(255,255,255,0.1) !important; opacity: 1 !important; }
         .swiper-pagination-bullet-active { background: #10b981 !important; width: 24px !important; border-radius: 4px !important; transition: all 0.3s !important; }
         .swiper-button-next, .swiper-button-prev { display: none !important; }

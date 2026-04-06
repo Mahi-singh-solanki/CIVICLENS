@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-import { useReports } from '../../context/ReportContext';
-import { useAuth } from '../../context/AuthContext';
+
 import { 
   Search, Filter, FileText, Clock, 
   RotateCcw, CheckCircle, MapPin, Calendar, Award 
 } from 'lucide-react';
 
 const Userdash = () => {
-  const { reports } = useReports();
-  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
 

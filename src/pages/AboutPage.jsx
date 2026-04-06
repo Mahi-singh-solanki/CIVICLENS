@@ -1,23 +1,66 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Users, Globe, Eye, 
   ShieldCheck, Award, BarChart 
 } from 'lucide-react';
+import Apiclient from '../api/Api';
 
 const AboutPage = () => {
   const navigate = useNavigate();
 
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const token = localStorage.getItem("Token");
+
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await Apiclient.get("/user/me", {
+          headers: { Authorization: token }
+        });
+        setUser(res.data);
+      } catch {
+        localStorage.clear();
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkUser();
+  }, []);
+
+  const handleCTA = () => {
+    if (loading) return;
+
+    const token = localStorage.getItem("Token");
+
+    if (!token || !user) {
+      navigate("/login");
+      return;
+    }
+
+    const role = user.role;
+
+    if (role === "civilian") {
+      navigate("/user-stats");
+    }
+  };
+
   return (
-    // Changed font-sans to font-instrument
     <div className="min-h-screen bg-[#050d0a] text-white font-instrument no-scrollbar overflow-x-hidden">
       
-      {/* --- BACKGROUND DECOR --- */}
       <div className="absolute inset-0 pointer-events-none -z-10">
         <div className="absolute top-[20%] left-[-5%] w-[600px] h-[600px] bg-emerald-500/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* --- NAVBAR --- */}
       <nav className="p-8 max-w-7xl mx-auto flex justify-between items-center relative z-10">
         <button 
           onClick={() => navigate(-1)} 
@@ -30,9 +73,8 @@ const AboutPage = () => {
 
       <main className="max-w-7xl mx-auto px-8 py-12">
         
-        {/* --- HERO: THE VISION --- */}
         <section className="mb-24 text-center">
-          <h1 className="text-6xl md:text-14xl font-black uppercase tracking-tighter mb-8 leading-none">
+          <h1 className="text-4xl sm:text-6xl md:text-14xl font-black uppercase tracking-tighter mb-8 leading-none">
             Radical <br/> <span className="text-emerald-500 italic">Transparency.</span>
           </h1>
           <p className="text-gray-400 text-xl md:text-1xl max-w-3xl mx-auto font-light leading-relaxed">
@@ -41,7 +83,6 @@ const AboutPage = () => {
           </p>
         </section>
 
-        {/* --- THE CORE STORY BOX --- */}
         <section className="mb-24">
           <div className="bg-[#08100d] border border-white/5 rounded-[4rem] p-12 md:p-20 shadow-2xl relative overflow-hidden">
             <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -74,26 +115,12 @@ const AboutPage = () => {
           </div>
         </section>
 
-        {/* --- VALUES GRID (WIDE BOXES) --- */}
         <section className="grid md:grid-cols-3 gap-8 mb-24">
-            <ValueCard 
-                icon={<Globe size={32} />} 
-                title="Hyper-Local" 
-                desc="We focus on neighborhoods, not just cities. Change starts at your doorstep." 
-            />
-            <ValueCard 
-                icon={<BarChart size={32} />} 
-                title="Data Driven" 
-                desc="We use analytics to show authorities exactly where the city is hurting most." 
-            />
-            <ValueCard 
-                icon={<Award size={32} />} 
-                title="Citizen First" 
-                desc="Your points and rank reflect your contribution to a better community." 
-            />
+            <ValueCard icon={<Globe size={32} />} title="Hyper-Local" desc="We focus on neighborhoods, not just cities. Change starts at your doorstep." />
+            <ValueCard icon={<BarChart size={32} />} title="Data Driven" desc="We use analytics to show authorities exactly where the city is hurting most." />
+            <ValueCard icon={<Award size={32} />} title="Citizen First" desc="Your points and rank reflect your contribution to a better community." />
         </section>
 
-        {/* --- CALL TO ACTION --- */}
         <section className="text-center bg-[#00592E] rounded-[4rem] p-20 shadow-2xl shadow-emerald-900/20">
             <Users size={64} className="mx-auto mb-8 text-white/80" />
             <h3 className="text-4xl font-bold mb-6">Become part of the solution.</h3>
@@ -101,7 +128,7 @@ const AboutPage = () => {
                 Join the 15,000+ citizens who are actively shaping the future of their urban environments.
             </p>
             <button 
-                onClick={() => navigate('/signup')}
+                onClick={handleCTA}
                 className="bg-white text-emerald-900 px-12 py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-all shadow-xl"
             >
                 Join the Movement
