@@ -19,9 +19,9 @@ const UserDashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const successStories = [
-    { id: 1, before: "images/garbagesea.jpeg", after: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400", text: "River cleaned within 24hr" },
-    { id: 2, before: "images/roadpot.jpeg", after: "images/cleanroad.jpeg", text: "Potholes cleared from the road" },
-    { id: 3, before: "images/garbagepark.jpeg", after: "images/cleanpark.jpeg", text: "Public park restored" }
+    { id: 1, before: "garbagesea.jpeg", after: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400", text: "River cleaned within 24hr" },
+    { id: 2, before: "roadpot.jpeg", after: "cleanroad.jpeg", text: "Potholes cleared from the road" },
+    { id: 3, before: "garbagepark.jpeg", after: "cleanpark.jpeg", text: "Public park restored" }
   ];
   const logout = () => {
     localStorage.clear();
