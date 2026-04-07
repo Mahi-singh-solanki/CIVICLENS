@@ -168,7 +168,7 @@ const ReportModal = ({ isOpen, onClose }) => {
                         </label>
                         <input 
                             className="w-full bg-[#050d0a] border border-white/5 rounded-xl p-3 text-sm outline-none"
-                            type="text" required placeholder="Optional (for user reference)"
+                            type="text" required placeholder="Enter location"
                             value={formData.location}
                             onChange={(e) => setFormData({...formData, location: e.target.value})}
                         />
