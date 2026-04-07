@@ -104,7 +104,7 @@ const Login = () => {
       const token = credentialResponse.credential;
 
       const response = await Apiclient.post(
-        'http://localhost:8000/user/google',
+        'https://168.144.68.244.sslip.io/user/google',
         { verification_token: token },
         {
           headers: {
