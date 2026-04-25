@@ -9,6 +9,15 @@ export const locations = [
         ]
     },
     {
+        area: "Kasarvadawli",
+        polygon: [
+            [72.9490, 19.2520],
+            [72.9870, 19.2520],
+            [72.9870, 19.2880],
+            [72.9490, 19.2880]
+        ]
+    },
+    {
         area: "Mumbai Suburban",
         polygon: [
             [72.80, 19.30],

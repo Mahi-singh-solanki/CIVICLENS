@@ -192,7 +192,7 @@ const AdminDashboard = () => {
 
 
 
-    // --- HANDLERS ---
+
 
     const handleAddAuthority = async (e) => {
         e.preventDefault();
@@ -222,7 +222,6 @@ const AdminDashboard = () => {
 
             alert("Authority registered successfully");
 
-            // 🔥 REFETCH USERS (IMPORTANT)
             const updatedRes = await fetch("https://168.144.68.244.sslip.io/admin/users", {
                 headers: { Authorization: token }
             });
